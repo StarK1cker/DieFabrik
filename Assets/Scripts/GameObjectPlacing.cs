@@ -239,23 +239,28 @@ public class GameObjectPlacing : MonoBehaviour
         if (Keyboard.current.upArrowKey.wasPressedThisFrame)
         {
             rotation = 90;
+            SoundManager.Instance.PlayUI();
         }
         if (Keyboard.current.downArrowKey.wasPressedThisFrame)
         {
             rotation = -90;
+            SoundManager.Instance.PlayUI();
         }
         if (Keyboard.current.leftArrowKey.wasPressedThisFrame)
         {
             rotation = 180;
+            SoundManager.Instance.PlayUI();
         }
         if (Keyboard.current.rightArrowKey.wasPressedThisFrame)
         {
             rotation = 0;
+            SoundManager.Instance.PlayUI();
         }
     }
 
     public void SetToNextRotation()
     {
         rotation -= 90;
+        SoundManager.Instance.PlayUI();
     }
 }
