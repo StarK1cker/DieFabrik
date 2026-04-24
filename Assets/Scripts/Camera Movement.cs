@@ -11,7 +11,6 @@ public class CameraMovement : MonoBehaviour
     private float targetZoom = 10f;
 
     public float speed;
-
     Vector3 lastMousePos;
 
     public GameObject OreGenerator;
@@ -47,7 +46,7 @@ public class CameraMovement : MonoBehaviour
         }
 
         Zoom();
-        Movement(mousePos);
+        Movement();
         KeepCameraInWorldBorders();
     }
 
@@ -61,17 +60,18 @@ public class CameraMovement : MonoBehaviour
         }
     }
 
-    void Movement(Vector2 mousePos)
+
+void Movement()
     {
-        if (!Mouse.current.rightButton.wasPressedThisFrame)
+        if (!Mouse.current.rightButton.isPressed)
         {
-            lastMousePos = mousePos;
+            lastMousePos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
         }
-        if (Mouse.current.rightButton.wasPressedThisFrame)
+        if (Mouse.current.rightButton.isPressed)
         {
-            Vector3 newMousePos = mousePos;
-            transform.position += lastMousePos - newMousePos;
-            targetPosition = transform.position;
+                Vector3 newMousePos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
+                transform.position += lastMousePos - newMousePos;
+                targetPosition = transform.position;
         }
     }
 

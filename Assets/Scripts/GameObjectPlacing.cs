@@ -3,6 +3,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 using TMPro;
+using System.Collections.Generic;
 
 public class GameObjectPlacing : MonoBehaviour
 {
@@ -13,23 +14,30 @@ public class GameObjectPlacing : MonoBehaviour
 
     public Image minerButton;
     public Image fliessbandButton;
+    public Image upgradeButton;
     public Image hammerButton;
     public GameObject rotationArrow;
     public GameObject upgradeUI;
     public TextMeshProUGUI upgradeText;
-
+    public TextMeshProUGUI upgradeSelectedObjectsText;
+    public GameObject selectionField;
+    public GameObject selectedObjectsUpgradeButton;
     int rotation = 90;
     int i = 0;
+    int upgradeCosts; 
+
+    Vector2 startMousePos;
 
     bool upgrade;
 
     public int coins = 0;
     public TextMeshProUGUI coinText;
 
-    Color selectedColor = new Color(255, 255, 255, 0.2f);
+    Color selectedColor = new Color(1f, 1f, 1f, 0.2f);
 
     public GameObject[] gameObjects;
-
+    private List<GameObject> selectedObjects = new List<GameObject>();
+    private List<GameObject> calculatedObjects = new List<GameObject>();
     void Start()
     {
         gameObjects = GameObject.FindGameObjectsWithTag("GameObjects");
@@ -45,9 +53,108 @@ public class GameObjectPlacing : MonoBehaviour
 
         Vector2 mousePos = Camera.main.ScreenToWorldPoint(Mouse.current.position.ReadValue());
 
-        if (i != 3)
+        UpgradeSystem(mousePos);
+
+        if (Keyboard.current.digit1Key.wasPressedThisFrame)
         {
-            
+            SelectMiner();
+        }
+        if (Keyboard.current.digit2Key.wasPressedThisFrame)
+        {
+            SelectFliessband();
+        }
+        if (Keyboard.current.digit3Key.wasPressedThisFrame)
+        {
+            SelectUpgrade();
+        }
+        if (Keyboard.current.digit4Key.wasPressedThisFrame)
+        {
+            SelectHammer();
+        }
+
+        if (!EventSystem.current.IsPointerOverGameObject())
+        {
+            if (Mouse.current.leftButton.wasPressedThisFrame && i == 1 && coins >= 100 && !upgrade)
+            {
+                PlaceMiner(mousePos);            
+            }
+            if (Mouse.current.leftButton.wasPressedThisFrame && i == 2 && coins >= 10 && !upgrade)
+            {
+                PlaceFliessband(mousePos);
+            }
+            if (Mouse.current.leftButton.wasPressedThisFrame && i == 4)
+            {
+                DestroyGameObject(mousePos);
+            }
+        }
+
+    }
+    
+    void Upgrade(Vector2 mousePos)
+    {
+        print("Upgrade");
+        Vector3 roundedMousePos = new Vector3(Mathf.Round(mousePos.x), Mathf.Round(mousePos.y), 0);
+        foreach (GameObject obj in gameObjects)
+        {
+            if (obj != null && roundedMousePos == obj.transform.position)
+            {
+                if (obj.name.Contains("Miner"))
+                {
+                    obj.GetComponent<MinerController>().Upgrade();
+                }
+                if (obj.name.Contains("Fliessband"))
+                {
+                    obj.GetComponent<FliessbandController>().Upgrade();
+                }
+            }
+        }
+    } 
+
+    public void SelectMiner()
+    {
+        SoundManager.Instance.PlayUI();
+        i = 1;
+        minerButton.color = selectedColor;
+        fliessbandButton.color = new Color(1f, 1f, 1f, 1f);
+        upgradeButton.color = new Color(1f, 1f, 1f, 1f);
+        hammerButton.color = new Color(1f, 1f, 1f, 1f);
+    }
+
+    public void SelectFliessband()
+    {
+        SoundManager.Instance.PlayUI();
+        i = 2;
+        minerButton.color = new Color(1f, 1f, 1f, 1f);
+        upgradeButton.color = new Color(1f, 1f, 1f, 1f);
+        fliessbandButton.color = selectedColor;
+        hammerButton.color = new Color(1f, 1f, 1f, 1f);
+    }
+
+    public void SelectUpgrade()
+    {
+        SoundManager.Instance.PlayUI();
+        i = 3;
+        minerButton.color = new Color(1f, 1f, 1f, 1f);
+        fliessbandButton.color = new Color(1f, 1f, 1f, 1f);
+        upgradeButton.color = selectedColor;  
+        hammerButton.color = new Color(1f, 1f, 1f, 1f);
+    }
+
+    public void SelectHammer()
+    {
+        SoundManager.Instance.PlayUI();
+        i = 4;
+        minerButton.color = new Color(1f, 1f, 1f, 1f);
+        fliessbandButton.color = new Color(1f, 1f, 1f, 1f);
+        upgradeButton.color = new Color(1f, 1f, 1f, 1f);
+        hammerButton.color = selectedColor;
+    }
+
+    void UpgradeSystem(Vector2 mousePos)
+    {
+        if (i == 3)
+        {
+            selectedObjectsUpgradeButton.SetActive(true);
             Vector3 roundedMousePos = new Vector3(Mathf.Round(mousePos.x), Mathf.Round(mousePos.y), 0);
             upgradeUI.SetActive(false);
             upgrade = false;
@@ -58,7 +165,7 @@ public class GameObjectPlacing : MonoBehaviour
                     upgrade = true;
                     upgradeUI.SetActive(true);
                     print("Upgrade-Symbol");
-                    upgradeUI.transform.position = new Vector3(mousePos.x + 10, mousePos.y + 20, 0);
+                    upgradeUI.transform.position = new Vector3(Mouse.current.position.ReadValue().x + 10, Mouse.current.position.ReadValue().y + 20, 0);
 
                     if (obj.name.Contains("Miner"))
                     {
@@ -82,46 +189,82 @@ public class GameObjectPlacing : MonoBehaviour
                     }
                 }
             }
-        }
-
-        if (Keyboard.current.digit1Key.wasPressedThisFrame)
-        {
-            SelectMiner();
-        }
-        if (Keyboard.current.digit2Key.wasPressedThisFrame)
-        {
-            SelectFliessband();
-        }
-        if (Keyboard.current.digit3Key.wasPressedThisFrame)
-        {
-            SelectHammer();
-        }
-
-        if (!EventSystem.current.IsPointerOverGameObject())
-        {
-            if (Mouse.current.leftButton.wasPressedThisFrame && i == 1 && coins >= 100 && !upgrade)
+            if (Mouse.current.leftButton.wasPressedThisFrame)
             {
-                PlaceMiner(mousePos);            
-            }
-            if (Mouse.current.leftButton.wasPressedThisFrame && i == 2 && coins >= 10 && !upgrade)
+                startMousePos = mousePos;
+                selectionField.SetActive(true);
+                selectionField.transform.localScale = Vector3.zero;
+                selectionField.transform.position = startMousePos;
+            } else if (Mouse.current.leftButton.isPressed)
             {
-                PlaceFliessband(mousePos);
+                Vector2 currentMousePos = mousePos;
+                Vector2 center = (startMousePos + currentMousePos) / 2;
+                selectionField.transform.position = center;
+                Vector3 size = new Vector3(Mathf.Abs(currentMousePos.x - startMousePos.x), Mathf.Abs(currentMousePos.y - startMousePos.y), 0);
+                selectionField.transform.localScale = size;
             }
-            if (Mouse.current.leftButton.wasPressedThisFrame && i == 3)
+            if (Mouse.current.leftButton.wasReleasedThisFrame) 
             {
-                DestroyGameObject(mousePos);
+                foreach (GameObject obj in gameObjects)
+                {
+                    if(obj != null && obj.transform.position.x > selectionField.transform.position.x - selectionField.transform.localScale.x / 2 &&
+                       obj.transform.position.x < selectionField.transform.position.x + selectionField.transform.localScale.x / 2 &&
+                       obj.transform.position.y > selectionField.transform.position.y - selectionField.transform.localScale.y / 2 &&
+                       obj.transform.position.y < selectionField.transform.position.y + selectionField.transform.localScale.y / 2)
+                    {
+                        if (!selectedObjects.Contains(obj))
+                        {
+                            selectedObjects.Add(obj);
+                        }
+                        
+                    }
+                }
+                selectionField.SetActive(false);
             }
+            foreach (GameObject obj in selectedObjects)
+            {
+                if(obj != null && !calculatedObjects.Contains(obj))
+                {
+                    obj.GetComponent<SpriteRenderer>().color = new Color(0.6f, 0.8f, 1f, 1f);
+                    if (obj.name.Contains("Miner"))
+                    {
+                        upgradeCosts += obj.GetComponent<SaveableObject>().level * 100;
+                        calculatedObjects.Add(obj);
+                    } else if (obj.name.Contains("Fliessband"))
+                    {
+                        upgradeCosts += obj.GetComponent<SaveableObject>().level * 10;
+                        calculatedObjects.Add(obj);
+                    }
+                    upgradeSelectedObjectsText.text = upgradeCosts.ToString();
+                }
+            }
+        } else
+        {
+            selectedObjectsUpgradeButton.SetActive(false);
+            upgradeUI.SetActive(false);
+            upgrade = false;
         }
-
+        if (Mouse.current.middleButton.wasPressedThisFrame || i != 3)
+        {
+            foreach (GameObject obj in selectedObjects)
+            {
+                if(obj != null)
+                {
+                    obj.GetComponent<SpriteRenderer>().color = new Color(1f, 1f, 1f, 1f);
+                }
+            }
+            selectedObjects.Clear();
+            calculatedObjects.Clear();
+            upgradeCosts = 0;
+            upgradeSelectedObjectsText.text = upgradeCosts.ToString();
+        }
     }
 
-    void Upgrade(Vector2 mousePos)
+    public void UpgradeSelectedObjects()
     {
-        print("Upgrade");
-        Vector3 roundedMousePos = new Vector3(Mathf.Round(mousePos.x), Mathf.Round(mousePos.y), 0);
-        foreach (GameObject obj in gameObjects)
+        foreach (GameObject obj in calculatedObjects)
         {
-            if (obj != null && roundedMousePos == obj.transform.position)
+            if (obj != null)
             {
                 if (obj.name.Contains("Miner"))
                 {
@@ -133,34 +276,9 @@ public class GameObjectPlacing : MonoBehaviour
                 }
             }
         }
+        calculatedObjects.Clear();
     }
-
-    public void SelectMiner()
-    {
-        SoundManager.Instance.PlayUI();
-        i = 1;
-        minerButton.color = selectedColor;
-        fliessbandButton.color = new Color(1f, 1f, 1f, 1f);
-        hammerButton.color = new Color(1f, 1f, 1f, 1f);
-    }
-
-    public void SelectFliessband()
-    {
-        SoundManager.Instance.PlayUI();
-        i = 2;
-        minerButton.color = new Color(1f, 1f, 1f, 1f);
-        fliessbandButton.color = selectedColor;
-        hammerButton.color = new Color(1f, 1f, 1f, 1f);
-    }
-
-    public void SelectHammer()
-    {
-        SoundManager.Instance.PlayUI();
-        i = 3;
-        minerButton.color = new Color(1f, 1f, 1f, 1f);
-        fliessbandButton.color = new Color(1f, 1f, 1f, 1f);
-        hammerButton.color = selectedColor;
-    }
+    
 
     void PlaceMiner(Vector2 mousePos)
     {
@@ -257,10 +375,11 @@ public class GameObjectPlacing : MonoBehaviour
             SoundManager.Instance.PlayUI();
         }
     }
-
     public void SetToNextRotation()
     {
         rotation -= 90;
         SoundManager.Instance.PlayUI();
     }
+    
 }
+
