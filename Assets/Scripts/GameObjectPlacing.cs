@@ -1,9 +1,12 @@
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
-using TMPro;
-using System.Collections.Generic;
+
 
 public class GameObjectPlacing : MonoBehaviour
 {
@@ -32,6 +35,8 @@ public class GameObjectPlacing : MonoBehaviour
 
     public int coins = 0;
     public TextMeshProUGUI coinText;
+    public TextMeshProUGUI coinsPerSecondText;
+    bool isCalculatingCoinsPerSecond;
 
     Color selectedColor = new Color(1f, 1f, 1f, 0.2f);
 
@@ -41,6 +46,7 @@ public class GameObjectPlacing : MonoBehaviour
     void Start()
     {
         gameObjects = GameObject.FindGameObjectsWithTag("GameObjects");
+        coinsPerSecondText.text = "0";
     }
 
     // Update is called once per frame
@@ -88,6 +94,10 @@ public class GameObjectPlacing : MonoBehaviour
             }
         }
 
+        if (!isCalculatingCoinsPerSecond)
+        {
+            StartCoroutine(CalculateCoinsPerSecond());
+        }
     }
     
     void Upgrade(Vector2 mousePos)
@@ -391,6 +401,21 @@ public class GameObjectPlacing : MonoBehaviour
         rotation -= 90;
         SoundManager.Instance.PlayUI();
     }
+
+
+    IEnumerator CalculateCoinsPerSecond()
+    {
+        isCalculatingCoinsPerSecond = true;
+        int startCoins = coins;
+        print(startCoins);
+        yield return new WaitForSeconds(10f);
+        print(startCoins);
+        if (startCoins != coins)
+        {
+            print(coinsPerSecondText.text = ((coins - startCoins) / 10).ToString());
+        }
+        isCalculatingCoinsPerSecond = false;
+     }
     
 }
 

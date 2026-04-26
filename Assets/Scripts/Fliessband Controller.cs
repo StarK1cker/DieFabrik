@@ -20,6 +20,7 @@ public class FliessbandController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        
         UpdateSprite();
 
         player = GameObject.FindGameObjectWithTag("MainCamera");
@@ -80,33 +81,40 @@ public class FliessbandController : MonoBehaviour
         UpdateSprite();
     }
 
-        public void UpdateSprite()
+    public void UpdateSprite()
+    {
+        int level = GetComponent<SaveableObject>().level;
+        print(level);
+        SpriteRenderer sr = GetComponent<SpriteRenderer>();
+
+        if (level >= 100)
         {
-            int level = GetComponent<SaveableObject>().level;
-            switch (level)
-            {
-                case 1:
-                    GetComponent<SpriteRenderer>().sprite = firstLevel;
-                    break;
-                case 2:
-                    GetComponent<SpriteRenderer>().sprite = secondLevel;
-                    break;
-                case 4:
-                    GetComponent<SpriteRenderer>().sprite = thirdLevel;
-                    break;
-                case 8:
-                    GetComponent<SpriteRenderer>().sprite = fourthLevel;
-                    break;
-                case 14:
-                    GetComponent<SpriteRenderer>().sprite = fifthLevel;
-                    break;
-                case 22:
-                    GetComponent<SpriteRenderer>().sprite = sixthLevel;
-                    break;
-                case 100:
-                    GetComponent<SpriteRenderer>().sprite = seventhLevel;
-                    break;
-            }
+            sr.sprite = seventhLevel;
         }
+        else if (level >= 22)
+        {
+            sr.sprite = sixthLevel;
+        }
+        else if (level >= 14)
+        {
+            sr.sprite = fifthLevel;
+        }
+        else if (level >= 8)
+        {
+            sr.sprite = fourthLevel;
+        }
+        else if (level >= 4)
+        {
+            sr.sprite = thirdLevel;
+        }
+        else if (level >= 2)
+        {
+            sr.sprite = secondLevel;
+        }
+        else if (level >= 1)
+        {
+            sr.sprite = firstLevel;
+        }
+    }
     
 }
