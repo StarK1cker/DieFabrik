@@ -7,11 +7,21 @@ using UnityEngine;
 public class FliessbandController : MonoBehaviour
 {
     GameObject player;
-
     Boolean isTransporting = false;
+
+    public Sprite firstLevel;
+    public Sprite secondLevel;
+    public Sprite thirdLevel;
+    public Sprite fourthLevel;
+    public Sprite fifthLevel;
+    public Sprite sixthLevel;
+    public Sprite seventhLevel;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+        UpdateSprite();
+
         player = GameObject.FindGameObjectWithTag("MainCamera");
         player.GetComponent<GameObjectPlacing>().gameObjects = GameObject.FindGameObjectsWithTag("GameObjects");
     }
@@ -66,7 +76,37 @@ public class FliessbandController : MonoBehaviour
             player.GetComponent<GameObjectPlacing>().coins -= level * 10;
             GetComponent<SaveableObject>().level++;
         }
+
+        UpdateSprite();
     }
 
+        public void UpdateSprite()
+        {
+            int level = GetComponent<SaveableObject>().level;
+            switch (level)
+            {
+                case 1:
+                    GetComponent<SpriteRenderer>().sprite = firstLevel;
+                    break;
+                case 2:
+                    GetComponent<SpriteRenderer>().sprite = secondLevel;
+                    break;
+                case 4:
+                    GetComponent<SpriteRenderer>().sprite = thirdLevel;
+                    break;
+                case 8:
+                    GetComponent<SpriteRenderer>().sprite = fourthLevel;
+                    break;
+                case 14:
+                    GetComponent<SpriteRenderer>().sprite = fifthLevel;
+                    break;
+                case 22:
+                    GetComponent<SpriteRenderer>().sprite = sixthLevel;
+                    break;
+                case 100:
+                    GetComponent<SpriteRenderer>().sprite = seventhLevel;
+                    break;
+            }
+        }
     
 }

@@ -106,6 +106,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4264377454ceefa4cb64f85840a0d467, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  firstLevel: {fileID: -1453007987006578793, guid: 9dd9c54ac0e3ac345b366042fe51921c, type: 3}
+  secondLevel: {fileID: 3790730654721001754, guid: e89a5fb77eaf1a54186eeb49c65b625a, type: 3}
+  thirdLevel: {fileID: 1534710718628442730, guid: 44de5bd78ab820844959c56aac8f99eb, type: 3}
+  fourthLevel: {fileID: 1704696479775653033, guid: 8809d52f7c1f641479f56c7000f38d5d, type: 3}
+  fifthLevel: {fileID: -8791154731626874624, guid: 756fc0951b7763a44a1234b898ce28e1, type: 3}
+  sixthLevel: {fileID: 6343070932545047634, guid: 42b652221f04bab4d8394f5d83ad5c12, type: 3}
+  seventhLevel: {fileID: 4054029281284213705, guid: ff55dfad9e7f9434eba3f124ab218e37, type: 3}
 --- !u!114 &3610124975677080216
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -119,6 +126,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SaveableObject
   objectID: Fliessband
+  level: 1
 --- !u!61 &5437238619973289144
 BoxCollider2D:
   m_ObjectHideFlags: 0

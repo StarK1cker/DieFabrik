@@ -238,12 +238,17 @@ public class GameObjectPlacing : MonoBehaviour
                     upgradeSelectedObjectsText.text = upgradeCosts.ToString();
                 }
             }
-        } else
+            if(Keyboard.current.enterKey.wasPressedThisFrame)
+            {
+                UpgradeSelectedObjects();
+            }
+        } else // i != 3
         {
             selectedObjectsUpgradeButton.SetActive(false);
             upgradeUI.SetActive(false);
             upgrade = false;
         }
+
         if (Mouse.current.middleButton.wasPressedThisFrame || i != 3)
         {
             foreach (GameObject obj in selectedObjects)
@@ -259,9 +264,14 @@ public class GameObjectPlacing : MonoBehaviour
             upgradeSelectedObjectsText.text = upgradeCosts.ToString();
         }
     }
+    
 
     public void UpgradeSelectedObjects()
     {
+        if(upgradeCosts > coins)
+        {
+            return;
+        }
         foreach (GameObject obj in calculatedObjects)
         {
             if (obj != null)
@@ -277,6 +287,7 @@ public class GameObjectPlacing : MonoBehaviour
             }
         }
         calculatedObjects.Clear();
+        upgradeCosts = 0;
     }
     
 
